@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
         'signup': (context) => SignUp(),
         'home': (context) => Home(),
         'addNote': (context) => AddNote(),
-        //'addNote': (context) => AddNote(),
+
       },
       theme: ThemeData(
           primaryColor: Colors.blue,
