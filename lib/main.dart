@@ -3,6 +3,7 @@ import 'package:notaa/01.auth/login.dart';
 import 'package:notaa/01.auth/signeUp.dart';
 import 'package:notaa/02.home/homePage.dart';
 import 'package:notaa/03.curd/addnote.dart';
+import 'package:notaa/03.curd/editnote.dart';
 
 void main() {
   runApp(MyApp());
@@ -21,6 +22,7 @@ class MyApp extends StatelessWidget {
         'signup': (context) => SignUp(),
         'home': (context) => Home(),
         'addNote': (context) => AddNote(),
+        'editNote': (context) => EditNote(),
 
       },
       theme: ThemeData(

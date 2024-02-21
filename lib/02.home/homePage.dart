@@ -1,23 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:notaa/03.curd/editnote.dart';
 import 'package:notaa/sdldb.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   Home({Key? key}) : super(key: key);
 
-  // List notes = [
-  //   {'note': "Doing Homework at 7 pm", 'image': 'assets/images/1.jpg'},
-  //   {'note': "Doing Homework at 7 pm", 'image': 'assets/images/2.jpg'},
-  //   {'note': "Doing Homework at 7 pm", 'image': 'assets/images/3.jpg'},
-  //   {'note': "Doing Homework at 7 pm", 'image': 'assets/images/4.jpg'},
-  // ];
+  @override
+  State<Home> createState() => _HomeState();
+}
 
+class _HomeState extends State<Home> {
+  // List notes = [
   Sqldb sqldb = Sqldb();
 
-  Future<List<Map>> readData() async {
+  List notes = [];
+
+  bool isLooding = true;
+
+  Future readData() async {
     List<Map> response = await sqldb.readData('''SELECT * FROM ('notes')''');
-    return response;
+    notes.addAll(response);
+    if (this.mounted) {
+      setState(() {});
+    }
+    isLooding = false;
   }
 
+  @override
+  void initState() {
+    readData();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,41 +38,68 @@ class Home extends StatelessWidget {
       appBar: AppBar(
         title: Text('Home Page'),
       ),
-      body: Container(
-          child: ListView(
-            children: [
-              FutureBuilder(
-                  future: readData(),
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if (snapshot.hasData) {
-                      return ListView.builder(
-                        itemCount: snapshot.data.length,
-                          itemBuilder:(context,i){
-                        return Card(
-                          child: ListTile(
-                            title: Text('${snapshot.data[i]['tittle']}'),
-                            subtitle: Text('${snapshot.data[i]['note']}'),
-                            trailing: Text('${snapshot.data[i]['color']}'),
-                          ),
-                        );
-                      },
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                      );
+      body: isLooding
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : Container(
+              child: ListView(
+              children: [
+                ListView.builder(
+                  itemCount: notes.length,
+                  itemBuilder: (context, i) {
+                    return Card(
+                      child: ListTile(
+                        title: Text('${notes[i]['tittle']}'),
+                        subtitle: Text('${notes[i]['note']}'),
+                        trailing: Row(
+                          children: [
+                            IconButton(
+                              onPressed: () async {
+                                int response = await sqldb.deleteData(
+                                    "DELETE FROM notes WHERE id = ${notes[i]['id']}");
+                                if (response > 0) {
+                                  notes.removeWhere(
+                                      (element) => element['id'] == notes[i]['id']);
+                                  setState(() {});
+                                }
+                              },
+                              icon: Icon(
+                                Icons.delete,
+                                color: Colors.red,
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: ()  {
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=> EditNote(
+                                  note:  '${notes[i]['note']}',
+                                  tittle:'${notes[i]['tittle']}' ,
+                                  color: '${notes[i]['color']}',
+                                  id: '${notes[i]['id']}',
+                                )));
 
-                    }
-                    else {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                  })
-            ],
-          )
-      ),
-      floatingActionButton: FloatingActionButton(onPressed: () {
-        Navigator.pushNamed(context, 'addNote');
-      }, child: Icon(Icons.add)),
+                              },
+                              icon: Icon(
+                                Icons.edit,
+                                color: Colors.blue,
+                              ),
+                            ),
+                          ],
+                          mainAxisSize: MainAxisSize.min,
+                        ),
+                      ),
+                    );
+                  },
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                )
+              ],
+            )),
+      floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.pushNamed(context, 'addNote');
+          },
+          child: Icon(Icons.add)),
     );
   }
 }
