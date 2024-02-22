@@ -5,11 +5,8 @@ import '../sdldb.dart';
 
 class EditNote extends StatefulWidget {
   final note;
-
   final tittle;
-
   final color;
-
   final id;
 
   const EditNote({Key? key, this.note, this.tittle, this.color, this.id})
@@ -93,9 +90,16 @@ class _EditNoteState extends State<EditNote> {
                         bottom: 20, left: 30, right: 30, top: 20),
                     child: MaterialButton(
                       onPressed: () async {
-                        int response = await sqldb.updateData('''
-                    UPDATE notes SET note = "${note.text}", tittle = "${tittle.text}", color = "${color.text}"  WHERE id = ${widget.id}
-                      ''');
+                        //     int response = await sqldb.updateData('''
+                        // UPDATE notes SET note = "${note.text}", tittle = "${tittle.text}", color = "${color.text}"  WHERE id = ${widget.id}''');
+                        int response = await sqldb.update(
+                            "notes",
+                            {
+                              "note": "${note.text}",
+                              "tittle": "${tittle.text}",
+                              "color": "${color.text}"
+                            },
+                            "id = ${widget.id}");
                         if (response > 0) {
                           Navigator.pushAndRemoveUntil(
                               context,
@@ -103,8 +107,8 @@ class _EditNoteState extends State<EditNote> {
                               (route) => false);
                         }
                       },
-                      child: Text('Edit Note'),
                       color: Colors.blue,
+                      child: Text('Edit Note'),
                     ),
                   ),
                   // ElevatedButton(onPressed: (){

@@ -18,7 +18,8 @@ class _HomeState extends State<Home> {
   bool isLooding = true;
 
   Future readData() async {
-    List<Map> response = await sqldb.readData('''SELECT * FROM ('notes')''');
+    //List<Map> response = await sqldb.readData('''SELECT * FROM ('notes')''');
+    List<Map> response = await sqldb.read("notes");
     notes.addAll(response);
     if (this.mounted) {
       setState(() {});
@@ -53,11 +54,13 @@ class _HomeState extends State<Home> {
                         title: Text('${notes[i]['tittle']}'),
                         subtitle: Text('${notes[i]['note']}'),
                         trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             IconButton(
                               onPressed: () async {
-                                int response = await sqldb.deleteData(
-                                    "DELETE FROM notes WHERE id = ${notes[i]['id']}");
+                                // int response = await sqldb.deleteData(
+                                //     "DELETE FROM notes WHERE id = ${notes[i]['id']}");
+                                int response = await sqldb.delete("notes", "id = ${notes[i]['id']} ");
                                 if (response > 0) {
                                   notes.removeWhere(
                                       (element) => element['id'] == notes[i]['id']);
@@ -85,7 +88,6 @@ class _HomeState extends State<Home> {
                               ),
                             ),
                           ],
-                          mainAxisSize: MainAxisSize.min,
                         ),
                       ),
                     );

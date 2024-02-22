@@ -74,8 +74,13 @@ class _AddNoteState extends State<AddNote> {
                         bottom: 20, left: 30, right: 30, top: 20),
                     child: MaterialButton(
                       onPressed: () async {
-                        int response = await sqldb.insertData(
-                            'INSERT INTO notes(tittle, note, color) VALUES("${tittle.text}", "${note.text}", "${color.text}")');
+                        // int response = await sqldb.insertData(
+                        //     'INSERT INTO notes(tittle, note, color) VALUES("${tittle.text}", "${note.text}", "${color.text}")');
+                        int response = await sqldb.insert("notes", {
+                          "tittle": "${tittle.text}",
+                          "note": "${note.text}",
+                          "color": "${color.text}"
+                        });
                         print("response===========================");
                         print(response);
                         Navigator.pushAndRemoveUntil(
@@ -83,8 +88,8 @@ class _AddNoteState extends State<AddNote> {
                             MaterialPageRoute(builder: (context) => Home()),
                             (route) => false);
                       },
-                      child: Text('Add Note'),
                       color: Colors.blue,
+                      child: Text('Add Note'),
                     ),
                   ),
                   // ElevatedButton(onPressed: (){

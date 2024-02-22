@@ -67,4 +67,32 @@ class Sqldb {
     await deleteDatabase(path);
   }
 // ممكن ابقا استخدمها ف زرار هيمسح الداتا بيز كلها بملفاتها من الذاكرة بتاعة الجهاز وبالتالي لما اعمل هوت ريستارد هينفذ دالة onCreate من اول تاني فيمكن استخدمها لو عاوز اعدل ف الدالة دي مثلا والافضل استخدم دالة onUpgrade
+
+/*
+=============================================================================================================================================================================
+Sqflite shortcuts الدوالة المختصرة للسيكوال هنكتب هنا الدوال وهنستعيها في اماكنها ونعمل كومن للدوال القديمه عشان نجرب بس
+ */
+  read(String table) async {
+    Database? myDb = await db;
+    List<Map> response = await myDb!.query(table);
+    return response;
+  }
+  //----------------------------------------------------------
+  insert(String table,Map<String, Object?> values) async {
+    Database? myDb = await db;
+    int response = await myDb!.insert(table,values);
+    return response;
+  }
+  //-----------------------------------------------------------
+  update(String table ,Map<String, Object?> value,String? mywher) async {
+    Database? myDb = await db;
+    int response = await myDb!.update(table,value,where: mywher);
+    return response;
+  }
+  //-----------------------------------------------------------
+  delete(String table ,String? mywhere) async {
+    Database? myDb = await db;
+    int response = await myDb!.delete(table,where: mywhere);
+    return response;
+  }
 }
